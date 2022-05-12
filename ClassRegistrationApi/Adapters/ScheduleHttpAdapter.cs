@@ -15,7 +15,7 @@ public class ScheduleHttpAdapter
 
     public async Task<ScheduleResponse?> GetScheduleForCourse(string courseId)
     {
-        var response = await _httpClient.GetAsync($"{path}{courseId}");
+        var response = await _httpClient.GetAsync($"{path}{courseId}"); // returns not found, something wrong with schedule api /courses/v1/schedule/{courseId}
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return null;
