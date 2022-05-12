@@ -9,14 +9,16 @@ namespace ClassRegistrationApi.Controllers;
 public class RegistrationController : ControllerBase
 {
     private readonly ILookupCourseSchedules _scheduleLookup;
+    private readonly ICreateReservations _reservationCenter;
 
-    public RegistrationController(ILookupCourseSchedules scheduleLookup)
+    public RegistrationController(ILookupCourseSchedules scheduleLookup, ICreateReservations createReservations)
     {
         _scheduleLookup = scheduleLookup;
+        _reservationCenter = createReservations;
     }
 
     [HttpPost]
-    public async Task<ActionResult<Registration>> AddARegistration([FromBody] RegistrationRequest request)
+    public async Task<ActionResult<Models.Registration>> AddARegistration([FromBody] RegistrationRequest request)
     {
         var dateOfCourse = request.DateOfCourse!.Value;
         bool courseIsAvailableOnThatDate = await _scheduleLookup.CourseAvailabeAsync(request.Course, dateOfCourse);
@@ -24,7 +26,7 @@ public class RegistrationController : ControllerBase
         {
             return BadRequest("Sorry, that course isn't available then.");
         }
-        var response = new Registration("99", request);
+        var response = await _reservationCenter.CreateReservationForAsync(request);
         return Ok(response);
     }
 }

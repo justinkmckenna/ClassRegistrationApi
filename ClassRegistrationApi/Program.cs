@@ -13,8 +13,14 @@ builder.Services.AddRouting(options =>
 // Config and Options
 builder.Services.Configure<MongoConnectionOptions>(builder.Configuration.GetSection(MongoConnectionOptions.SectionName));
 // Add services to the container.
-builder.Services.AddTransient<ILookupCourseSchedules, TrivialCourseScheduleLookup>();
-builder.Services.AddSingleton<GenericMongoAdapter>();
+var scheduleUrl = builder.Configuration.GetValue<string>("scheduleApiUrl");
+builder.Services.AddHttpClient<ScheduleHttpAdapter>(client =>
+{
+    client.BaseAddress = new Uri(scheduleUrl);
+});
+builder.Services.AddTransient<ILookupCourseSchedules, ScheduleApiLookup>();
+builder.Services.AddTransient<ICreateReservations, MongoReservationProcessor>();
+builder.Services.AddSingleton<RegistrationMongoAdapter>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

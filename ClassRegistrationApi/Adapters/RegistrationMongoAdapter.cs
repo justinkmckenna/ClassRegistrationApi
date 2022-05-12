@@ -1,18 +1,18 @@
-﻿using HypertheoryApiUtils;
+﻿using ClassRegistrationApi.Domain;
+using HypertheoryApiUtils;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Events;
-using System.Reflection.Metadata;
 
 namespace ClassRegistrationApi.Adapters;
 
-public class GenericMongoAdapter
+public class RegistrationMongoAdapter
 {
-    private readonly IMongoCollection<Document> _documentCollection;
-    private readonly ILogger<GenericMongoAdapter> _logger;
+    private readonly IMongoCollection<Registration> _documentCollection;
+    private readonly ILogger<RegistrationMongoAdapter> _logger;
 
-    public GenericMongoAdapter(ILogger<GenericMongoAdapter> logger, IOptions<MongoConnectionOptions> options)
+    public RegistrationMongoAdapter(ILogger<RegistrationMongoAdapter> logger, IOptions<MongoConnectionOptions> options)
     {
         _logger = logger;
         var clientSettings = MongoClientSettings.FromConnectionString(options.Value.ConnectionString);
@@ -30,9 +30,9 @@ public class GenericMongoAdapter
 
         var db = conn.GetDatabase(options.Value.Database);
 
-        _documentCollection = db.GetCollection<Document>(options.Value.Collection);
+        _documentCollection = db.GetCollection<Registration>(options.Value.Collection);
 
     }
 
-    public IMongoCollection<Document> GetDocumentCollection() => _documentCollection;
+    public IMongoCollection<Registration> GetRegistrationCollection() => _documentCollection;
 }
